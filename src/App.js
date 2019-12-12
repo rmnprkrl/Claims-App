@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import Web3 from 'web3';
 
 // Assets
-import Kusama from './assets/kusama_word.png';
+import Polkadot from './assets/polkadot_logo.png';
 
 // Components
 import InfoBox from './components/Info';
@@ -35,11 +35,11 @@ const check = (address) => {
 const Navbar = styled.div`
   width: 100vw;
   height: 60px;
-  background: black;
+  background: white;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-around;
+  justify-content: ;
   position: fixed;
   color: white;
   z-index: 100;
@@ -62,11 +62,11 @@ const NavButton = styled.button`
 
 const Main = styled.div`
   width: 100%;
-  padding: 3%;
+  padding: 0%;
   display: flex;
-  flex-direction: row-wrap;
+  flex-direction: column;
   padding-top: 0;
-  margin-top: 1%;
+  margin-top: 0%;
   @media (max-width: 750px) {
     flex-direction: column;
     padding: 0;
@@ -75,30 +75,139 @@ const Main = styled.div`
   }
 `;
 
-const MainLeft = styled.div`
+const Section = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: left;
-  width: 42%;
-  margin-right: 1%;
-  background: rgba(255,255,255,1.0);
-  border-radius: 12px;
-  padding: 2%;
+  flex-direction: ${props => props.alignment == 'row'? 'row': 'column'};
+  align-items: ${props => props.centered? 'center' : 'flex-start'};
+  width: 100%;
+  height: ${props => props.height}px;
+  margin-right: 0%;
+  background: ${props => props.bg};
+  padding: 0%;
   @media (max-width: 750px) {
     width: 90%;
     margin-bottom: 3%;
   }
 `;
 
-const MainRight = styled.div`
+const HeaderBox = styled.div`
+  width: 45%;
+  background: ;
+  margin-left: 10%;
+  margin-top: 2%;
+`;
+
+const Text = styled.h2`
+  font-weight: 100;
+  font-size: 34px;
+`;
+
+const DotButton = styled.button`
+  border-radius: 25px;
+  background: #E6007A;
+  width: 300px;
+  border: none;
+  color: white;
+  padding: 10px;
+  padding-left: 40px;
+  padding-right: 40px;
+  font-size: 24px;
+  font-weight: 300;
+  align-self: center;
+  :hover {
+    cursor: pointer;
+  }
+`;
+
+const Internal = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding: 10%;
+  flex-direction: column;
+`;
+
+const Column = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding-left: ${props => props.paddingHoriz? props.paddingHoriz: 0}%;
+  padding-right: ${props => props.paddingHoriz? props.paddingHoriz: 0}%;
+  padding-top: ${props => props.paddingVert? props.paddingVert: 0}%;
+  padding-bottom: ${props => props.paddingVert? props.paddingVert: 0}%;
+  flex-direction: column;
+`;
+
+const Row = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding-left: ${props => props.paddingHoriz? props.paddingHoriz: 0}%;
+  padding-right: ${props => props.paddingHoriz? props.paddingHoriz: 0}%;
+  padding-top: ${props => props.paddingVert? props.paddingVert: 0}%;
+  padding-bottom: ${props => props.paddingVert? props.paddingVert: 0}%;
+  flex-direction: row;
+`;
+
+const InternalLeft = styled.div`
+  height: 100%;
+  width: 40%;
   display: flex;
   flex-direction: column;
+`;
+
+const InternalRight = styled.div`
+  height: 100%;
+  width: 40%;
+`;
+
+
+
+const SupportLeft = styled.div`
+  height: 100%;
+  width: 50%;
+  padding: 20px;
+  padding-left: 50px;
+`;
+
+const InnerSupportLeft = styled.div`
+  width: 60%;
+`;
+
+const SupportRight = styled.div`
+  height: 100%;
+  width: 50%;
+  padding: 20px;
+  padding-left: 50px;
+`;
+
+const InnerSupportRight = styled.div`
+  width: 60%;
+  padding-top: 20%;
+`;
+
+const SupportButton = styled(DotButton)`
+  background: rgba(255,255,255,0.5);
+  color: black;
+
+`;
+
+const MainHeadline = styled.h1`
+  color: white;
+  display: flex;
+  height: 100%;
+  align-items: center;
+`;
+
+const MainRight = styled.div`
+  display: none;
+  flex-direction: column;
   align-items: left;
-  width: 42%;
-  margin-left: 1%;
+  width: 0%;
+  margin-left: 0%;
   background: white;
   border-radius: 12px;
-  padding: 2%;
+  padding: 0%;
   padding-top: 0;
   @media (max-width: 750px) {
     width: 90%;
@@ -290,7 +399,7 @@ class App extends React.Component {
       <Router>
       <div>
         <Navbar>
-          <img src={Kusama} width='120px' height='20px'/>
+          <img src={Polkadot} width='240px' height='120px'/>
         </Navbar>
         <Spacer/>
         <Route
@@ -298,7 +407,73 @@ class App extends React.Component {
           render={() => (
             <>
               <Main>
-                <MainLeft>
+                <Section height={'300'} bg='#DB0072' centered={true}>
+                  <MainHeadline>Welcome to DOT Claims</MainHeadline>
+                </Section>
+                <Section height={600} bg='white'>
+                  <HeaderBox>
+                    <Text>This App will walk you through the process of claiming DOTs. In order to do so, you need to have an allocation of DOTs.</Text>
+                  </HeaderBox>
+                  <h1>Placeholder</h1>
+                  <DotButton>Start</DotButton>
+                </Section>
+                <Section height={300} bg='silver'>
+                  <Column paddingHoriz={10} paddingVert={5}>
+                    <h1>Create a wallet</h1>
+                    <Row>
+                      <InternalLeft>
+                        <p>You will need to generate a Kusama account to claim KSM.
+    There are a few ways you can create one.
+
+    For most users, we recommend using the Polkadot UI since it
+    will allow you to store your encrypted keystore locally.</p>
+                      </InternalLeft>
+                      <InternalRight>
+                        <p>Another option you may consider using is the subkey command
+  line utility, which will allow you to take extra steps to protect
+  the security of your key. Additionally, two other options include
+  the Enzyme browser extension wallet and the Polkawallet
+  mobile wallet, although these require an extra step to generate
+  Kusama addresses.</p>
+                      </InternalRight>
+                    </Row>
+                  </Column>
+                </Section>
+                <Section height={600} bg='white'>
+                  Here goes the instructions
+                </Section>
+                <Section height={300} bg='silver'>
+                  Claims
+                </Section>
+                <Section height={600} bg='white'>
+                  Here goes the instructions
+                </Section>
+                <Section height={'400'} bg='#DB0072'>
+                  {/* <MainHeadline>Check your claims</MainHeadline> */}
+                  <InfoBox claims={this.state.claims || null} frozenToken={this.state.frozenToken || null} />
+                </Section>
+                <Section height={300} bg='silver' alignment='row'>
+                  <SupportLeft>
+                    <InnerSupportLeft>
+                      <h4>Third Party Claims Processes</h4>
+                      <p>We do not recommend using a third party app or process to claim or acquire your DOT.</p>
+                      <p>Claiming using a third-party process can lead to the loss ofyour allocation, therefore we cannot recommend using any
+  third party apps to do so. Manually specifying your transaction
+  data, as specified in our claims process, is the only way to be
+  certain you will receive your allocation.</p>
+                    </InnerSupportLeft>
+                  </SupportLeft>
+                  <SupportRight>
+                    <InnerSupportRight>
+                      <p>Need help? Join the Claims Support chat.</p>
+                      <SupportButton>Support Chat</SupportButton>
+                    </InnerSupportRight>
+                  </SupportRight>
+                </Section>
+                <Section height={'300'} bg='#172026'>
+                  <MainHeadline>Footer</MainHeadline>
+                </Section>
+                {/* <Section>
                   <h1>Claim KSM</h1>
                   <br/>
                   <p>This DApp will walk you through the process of claiming KSM. In order to claim KSM you need to have an allocation of DOTs.</p>
@@ -317,7 +492,7 @@ class App extends React.Component {
                   <a href="https://guide.kusama.network/en/latest/start/claims/" target="_blank">See full step-by-step instructions.</a><br/>
                   <a href="https://riot.im/app/#/room/#KSMAClaims:polkadot.builders" target="_blank">Need help? Join the Claims Support chat.</a>
 
-                </MainLeft>
+                </Section> */}
                 <MainRight>
                   <h4>Please claim your KSMs by using the Polkadot JS <a href="https://polkadot.js.org/apps/#/claims">Claims app</a>. If you need help please refer to the Kusama <a href="https://guide.kusama.network/en/latest/start/dot-holders/">guide</a>.</h4>
                 {/* <h4>How will you claim?</h4>
@@ -380,7 +555,7 @@ class App extends React.Component {
                 }
                 </MainRight>
               </Main>
-              <InfoBox claims={this.state.claims || null} frozenToken={this.state.frozenToken || null} />
+              {/* <InfoBox claims={this.state.claims || null} frozenToken={this.state.frozenToken || null} /> */}
             </>
           )}/>
       </div>

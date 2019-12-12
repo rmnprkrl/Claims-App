@@ -3,17 +3,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: black;
-  background-color: #000;
+  background-color: maroon;
   overflow-x: hidden;
 }
 
-@font-face {
-  font-family: 'Visuelt';
-  src: local('Visuelt'), url(./fonts/Visuelt_Bold.ttf);
-}
-
 html {
-  font-family: 'Space Mono', monospace;
+  font-family: 'Muli', monospace;
 }
 
 button, Link {

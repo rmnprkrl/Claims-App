@@ -8,12 +8,10 @@ const MainBottom = styled.div`
   flex-direction: column;
   align-items: center;
   width: 90%;
-  margin-left: 3%;
-  margin-top: -1%;
-  margin-bottom: 3%;
-  background: white;
+  background: ;
   border-radius: 12px;
   padding: 2%;
+  color: white;
 `;
 
 const MyInput = styled.input`
@@ -117,8 +115,8 @@ class InfoBox extends React.Component {
 
     return (
       <MainBottom>
-        <h2>Check your information:</h2>
-        <h4>Paste the Ethereum address to your DOT allocation below to check your Kusama address, index and balance:</h4>
+        <h1>Verify your claim</h1>
+        <h4>Paste an Ethereum or Polkadot address to check the associated information:</h4>
         <MyInput
           width='500'
           name='balance-check'
@@ -133,10 +131,10 @@ class InfoBox extends React.Component {
           amended &&
           <p><b>Amended for:</b>{balData ? amended : ''}</p>
         }
-        <p><b>Kusama address:</b> {(balData && balData.pubKey) ? (claimed ? balData.kusamaAddress : 'Not claimed') : 'None'}</p>
+        <p><b>Polkadot address:</b> {(balData && balData.pubKey) ? (claimed ? balData.kusamaAddress : 'Not claimed') : 'None'}</p>
         <p><b>Public key:</b> {(balData && balData.pubKey) ? (claimed ? balData.pubKey : 'Not claimed') : 'None'}</p>
         <p><b>Index:</b> {(balData && balData.index) ? (claimed ? balData.index : 'Not claimed') : 'None'}</p> 
-        <p><b>Balance:</b> {balData ? balData.bal : '0'} KSM {balData && balData.vested ? `(${balData.vested} vested)` : ''}</p>
+        <p><b>Balance:</b> {balData ? balData.bal : '0'} DOT {balData && balData.vested ? `(${balData.vested} vested)` : ''}</p>
       </MainBottom>
     );
   }
