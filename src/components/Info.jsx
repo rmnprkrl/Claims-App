@@ -7,11 +7,12 @@ const MainBottom = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 90%;
+  width: 96%;
   background: ;
   border-radius: 12px;
   padding: 2%;
   color: white;
+  height: 100%;
 `;
 
 const MyInput = styled.input`

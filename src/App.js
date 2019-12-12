@@ -12,6 +12,7 @@ import Web3 from 'web3';
 
 // Assets
 import Polkadot from './assets/polkadot_logo.png';
+import PolkadotLight from './assets/logo-polkadot-light.svg';
 
 // Components
 import InfoBox from './components/Info';
@@ -39,8 +40,6 @@ const Navbar = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: ;
-  position: fixed;
   color: white;
   z-index: 100;
 `;
@@ -83,6 +82,7 @@ const Section = styled.div`
   height: ${props => props.height}px;
   margin-right: 0%;
   background: ${props => props.bg};
+  color: ${props => props.color == 'white'? 'white': 'black'};
   padding: 0%;
   @media (max-width: 750px) {
     width: 90%;
@@ -102,6 +102,14 @@ const Text = styled.h2`
   font-size: 34px;
 `;
 
+const Line = styled.div`
+  height: 2px;
+  background: grey;
+  width: 80%;
+  margin-left: 10%;
+  margin:-right: 10%;
+`;
+
 const DotButton = styled.button`
   border-radius: 25px;
   background: #E6007A;
@@ -117,14 +125,6 @@ const DotButton = styled.button`
   :hover {
     cursor: pointer;
   }
-`;
-
-const Internal = styled.div`
-  display: flex;
-  width: 100%;
-  height: 100%;
-  padding: 10%;
-  flex-direction: column;
 `;
 
 const Column = styled.div`
@@ -161,29 +161,13 @@ const InternalRight = styled.div`
   width: 40%;
 `;
 
-
-
-const SupportLeft = styled.div`
-  height: 100%;
-  width: 50%;
-  padding: 20px;
-  padding-left: 50px;
-`;
-
 const InnerSupportLeft = styled.div`
-  width: 60%;
+  width: 50%;
 `;
 
-const SupportRight = styled.div`
-  height: 100%;
-  width: 50%;
-  padding: 20px;
-  padding-left: 50px;
-`;
 
 const InnerSupportRight = styled.div`
-  width: 60%;
-  padding-top: 20%;
+  width: 50%;
 `;
 
 const SupportButton = styled(DotButton)`
@@ -401,7 +385,6 @@ class App extends React.Component {
         <Navbar>
           <img src={Polkadot} width='240px' height='120px'/>
         </Navbar>
-        <Spacer/>
         <Route
           path='/'
           render={() => (
@@ -453,25 +436,68 @@ class App extends React.Component {
                   <InfoBox claims={this.state.claims || null} frozenToken={this.state.frozenToken || null} />
                 </Section>
                 <Section height={300} bg='silver' alignment='row'>
-                  <SupportLeft>
+                  <Column paddingHoriz={10} paddingVert={5}>
+                    <h1>Third Party Claims Processes</h1>
+                    <Row>
                     <InnerSupportLeft>
-                      <h4>Third Party Claims Processes</h4>
                       <p>We do not recommend using a third party app or process to claim or acquire your DOT.</p>
                       <p>Claiming using a third-party process can lead to the loss ofyour allocation, therefore we cannot recommend using any
   third party apps to do so. Manually specifying your transaction
   data, as specified in our claims process, is the only way to be
   certain you will receive your allocation.</p>
                     </InnerSupportLeft>
-                  </SupportLeft>
-                  <SupportRight>
                     <InnerSupportRight>
                       <p>Need help? Join the Claims Support chat.</p>
                       <SupportButton>Support Chat</SupportButton>
                     </InnerSupportRight>
-                  </SupportRight>
+                    </Row>
+                  </Column>
                 </Section>
-                <Section height={'300'} bg='#172026'>
-                  <MainHeadline>Footer</MainHeadline>
+                <Section height={'420'} bg='#172026' color='white'>
+                  <Row paddingHoriz={10} paddingVert={2} style={{ width: '80%' }}>
+                    <Column> 
+                      <h5>General</h5>
+                      <a href="">About</a>
+                      <a href="">FAQ</a>
+                      <a href="">Contact</a>
+                      <a href="">Build on Polkadot</a>
+                      <a href="">Grants and Bounties</a>
+                      <a href="">Careers</a>
+                    </Column>
+                    <Column>
+                      <h5>Technology</h5>
+                      <a href="">Technology</a>
+                      <a href="">Token</a>
+                      <a href="">Telemetry</a>
+                      <a href="">Substrate</a>
+                      <a href="">Whitepaper</a>
+                    </Column>
+                    <Column>
+                      <h5>Community</h5>
+                      <a href="">Community</a>
+                      <a href="">Documentation</a>
+                      <a href="">Blog</a>
+                      <a href="">GitHub</a>
+                      <a href="">Riot Chat</a>
+                      <a href="">Medium</a>
+                      <a href="">Reddit</a>
+                      <a href="">Telegram</a>
+                    </Column>
+                    <Column>
+                      Icons!
+                    </Column>
+                  </Row>
+                  <Line/>
+                  <Row paddingHoriz={10} paddingVert={2} style={{ alignItems: 'flex-end', }}>
+                    <img width='120' src={PolkadotLight}/>
+                    © 2020
+                    <a href="">Polkadot</a>{' | '}
+                    <a href="">Impressum</a> |
+                    <a href="">Disclaimer</a> |
+                    <a href="">Privacy</a> |
+                    <a href="">Testnet Disclaimer</a> |
+                    <a href="">Memorandum  </a>
+                  </Row>
                 </Section>
                 {/* <Section>
                   <h1>Claim KSM</h1>
