@@ -1,4 +1,4 @@
-import { encodeAddress } from '@polkadot/keyring';
+import { encodeAddress, decodeAddress } from '@polkadot/keyring';
 import * as pUtil from '@polkadot/util';
 import React from 'react';
 import styled from 'styled-components';
@@ -40,54 +40,73 @@ class InfoBox extends React.Component {
 
   balanceCheck = async (e) => {
     let { value } = e.target;
+    let amended = false;
+    let polkadotAddress, pubKey, index, bal, vestingAmt;
 
-    if (value.length !== 42) {
+    if (value.length !== 42 && value.length !== 66) {
       return;
     }
+
     if (!this.props.frozenToken || !this.props.claims) {
       return;
     }
 
-    const logs = await this.props.claims.getPastEvents('Amended', {
-      fromBlock: '8167892',
-      toBlock: 'latest',
-      filter: {
-        amendedTo: [value],
-      }
-    });
-
-    let amended = false;
-    if (logs && logs.length && value !== '0x00b46c2526e227482e2EbB8f4C69E4674d262E75') {
-      value = logs[0].returnValues.original;
-      amended = logs[0].returnValues.original;
-    }
-
-    const vested = await this.props.claims.getPastEvents('Vested', {
-      fromBlock: '8167892',
-      toBlock: 'latest',
-      filter: {
-        eth: [value],
-      }
-    });
-
-    let vestingAmt;
-    if (vested && vested.length) {
-      vestingAmt = vested[0].returnValues.amount;
-    }
-
-    let bal = await this.props.frozenToken.methods.balanceOf(value).call();
-    if (Number(bal) === 0) {
-      this.setState({
-        noBalance: true,
+    if (value.length === 42) {
+      const logs = await this.props.claims.getPastEvents('Amended', {
+        fromBlock: '8167892',
+        toBlock: 'latest',
+        filter: {
+          amendedTo: [value],
+        }
       });
-      return;
-    };
 
-    const claimData = await this.props.claims.methods.claims(value).call();
-    const { pubKey, index } = claimData;
-    let kusamaAddress;
-    if (pubKey !== '0x0000000000000000000000000000000000000000000000000000000000000000') {
-      kusamaAddress = encodeAddress(pUtil.hexToU8a(pubKey), 2);
+      if (logs && logs.length && value !== '0x00b46c2526e227482e2EbB8f4C69E4674d262E75') {
+        value = logs[0].returnValues.original;
+        amended = logs[0].returnValues.original;
+      }
+
+      const vested = await this.props.claims.getPastEvents('Vested', {
+        fromBlock: '8167892',
+        toBlock: 'latest',
+        filter: {
+          eth: [value],
+        }
+      });
+
+      if (vested && vested.length) {
+        vestingAmt = vested[0].returnValues.amount;
+      }
+    }
+
+    // Check whether it is a Ethereum or Polkadot address
+    try {
+      if (value.length === 42) {
+        bal = await this.props.frozenToken.methods.balanceOf(value).call();
+      } else {
+        bal = await this.props.claims.methods.saleAmounts(value).call();
+      }
+
+      if (Number(bal) === 0) {
+        this.setState({
+          noBalance: true,
+        });
+        return;
+      };
+
+    } catch (error) {
+      console.log('error occur in checking balance:', error)
+    }
+
+    if (value.length === 42) {
+      const claimData = await this.props.claims.methods.claims(value).call();
+        index = claimData.index;
+        pubKey = claimData.pubKey;
+      if (pubKey !== '0x0000000000000000000000000000000000000000000000000000000000000000') {
+        polkadotAddress = encodeAddress(pUtil.hexToU8a(pubKey), 0);
+      }
+    } else {
+      pubKey = value
+      polkadotAddress = encodeAddress(value, 0);                      
     }
 
     // Normalization
@@ -101,7 +120,7 @@ class InfoBox extends React.Component {
       balData: {
         bal,
         index: index || null,
-        kusamaAddress: kusamaAddress || null,
+        polkadotAddress: polkadotAddress || null,
         pubKey: pubKey || null,
         vested: vestingAmt,
       },
@@ -117,7 +136,7 @@ class InfoBox extends React.Component {
     return (
       <MainBottom>
         <h1>Verify your claim</h1>
-        <h4>Paste an Ethereum or Polkadot address to check the associated information:</h4>
+        <h4>Paste an Ethereum or Polkadot public key to check the associated information:</h4>
         <MyInput
           width='500'
           name='balance-check'
@@ -125,14 +144,14 @@ class InfoBox extends React.Component {
         />
         {
           noBalance &&
-            <p>No associated DOT balance for this Ethereum account.</p>
+            <p>No associated DOT balance for this Ethereum account or Polkadot public key.</p>
         }
 
         {
           amended &&
           <p><b>Amended for:</b>{balData ? amended : ''}</p>
         }
-        <p><b>Polkadot address:</b> {(balData && balData.pubKey) ? (claimed ? balData.kusamaAddress : 'Not claimed') : 'None'}</p>
+        <p><b>Polkadot address:</b> {(balData && balData.pubKey) ? (claimed ? balData.polkadotAddress : 'Not claimed') : 'None'}</p>
         <p><b>Public key:</b> {(balData && balData.pubKey) ? (claimed ? balData.pubKey : 'Not claimed') : 'None'}</p>
         <p><b>Index:</b> {(balData && balData.index) ? (claimed ? balData.index : 'Not claimed') : 'None'}</p> 
         <p><b>Balance:</b> {balData ? balData.bal : '0'} DOT {balData && balData.vested ? `(${balData.vested} vested)` : ''}</p>

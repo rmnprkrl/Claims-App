@@ -30,7 +30,7 @@ const KusamaClaimPrefix = 'Pay KSMs to the Kusama account:';
 const check = (address) => {
   const decoded = pUtil.bufferToU8a(bs58.decode(address));
   
-  return decoded[0] === 2;
+  return decoded[0] === 0;
 }
 
 const Navbar = styled.div`
@@ -183,21 +183,29 @@ const MainHeadline = styled.h1`
   align-items: center;
 `;
 
+// const MainRight = styled.div`
+//   display: none;
+//   flex-direction: column;
+//   align-items: left;
+//   width: 0%;
+//   margin-left: 0%;
+//   background: white;
+//   border-radius: 12px;
+//   padding: 0%;
+//   padding-top: 0;
+//   @media (max-width: 750px) {
+//     width: 90%;
+//     margin-bottom: 3%;
+//     margin-top: -1%;
+//   }
+// `;
+
 const MainRight = styled.div`
-  display: none;
-  flex-direction: column;
-  align-items: left;
-  width: 0%;
-  margin-left: 0%;
-  background: white;
   border-radius: 12px;
-  padding: 0%;
-  padding-top: 0;
-  @media (max-width: 750px) {
-    width: 90%;
-    margin-bottom: 3%;
-    margin-top: -1%;
-  }
+  padding: 2%;
+  height: 100%;
+  margin: auto;
+  width: 70%;
 `;
 
 const Spacer = styled.div`
@@ -305,7 +313,7 @@ class App extends React.Component {
 
   componentDidMount = async () => {
 
-  const w3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/7121204aac9a45dcb9c2cc825fb85159"));
+  const w3 = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/7121204aac9a45dcb9c2cc825fb85159"));
 
   this.setState({
     web3: w3,
@@ -315,8 +323,8 @@ class App extends React.Component {
 
   initializeContracts = async (web3) => {
 
-    const frozenToken = new web3.eth.Contract(FrozenToken.abi, "0xb59f67A8BfF5d8Cd03f6AC17265c550Ed8F33907");
-    const claims = new web3.eth.Contract(Claims.abi, "0x9a1B58399EdEBd0606420045fEa0347c24fB86c2");
+    const frozenToken = new web3.eth.Contract(FrozenToken, "0xebfbe0f24e6dfaff47b05a77b9c81ec9890542c3");
+    const claims = new web3.eth.Contract(Claims, "0x7aeefaab36a205a9d3c3c511db74d080997fbb63");
   
     this.setState({
       claims,
@@ -328,29 +336,36 @@ class App extends React.Component {
     const { name, value } = e.target;
     if (name === 'valid-check') {
       let notice, pubKey, status;
-      // Check if its a properly encoding Kusama address.
-      if (!check(value)) {
-        try {
-          pubKey = pUtil.u8aToHex(decodeAddress(value));
-          // It's either a Substrate or Polkadot address.
-          // pubKey = 'This is not a Kusama address.'
-          notice = true;
-          status = true;
-        } catch (e) {
-          pubKey = 'invalid'
-          notice = false;
-          status = false;
+      
+      try {
+        // Check if its a properly encoding Kusama address.
+        if (!check(value)) {
+          try {
+            pubKey = pUtil.u8aToHex(decodeAddress(value));
+            // It's either a Kusama, Substrate or other.
+            // pubKey = 'This is not a Polkadot address.'
+            notice = true;
+            status = true;
+          } catch (e) {
+            pubKey = 'invalid';
+            notice = false;
+            status = false;
+          }
+        } else {
+          try {
+            pubKey = pUtil.u8aToHex(decodeAddress(value, false,  0));
+            notice = false;
+            status = true;
+          } catch (e) {
+            pubKey = 'invalid';
+            notice = false;
+            status = false;
+          }
         }
-      } else {
-        try {
-          pubKey = pUtil.u8aToHex(decodeAddress(value, false,  2));
-          notice = false;
-          status = true;
-        } catch (e) {
-          pubKey = 'invalid';
-          notice = false;
-          status = false;
-        }
+      } catch (e) {
+        pubKey = 'invalid';
+        notice = false;
+        status = false;
       }
 
       this.setState({
@@ -375,6 +390,7 @@ class App extends React.Component {
   }
 
   render() {
+
     if (this.state.web3 !== null && !this.state.claims && !this.state.frozenToken) {
       this.initializeContracts(this.state.web3);
     }
@@ -395,7 +411,7 @@ class App extends React.Component {
                 </Section>
                 <Section height={600} bg='white'>
                   <HeaderBox>
-                    <Text>This App will walk you through the process of claiming DOTs. In order to do so, you need to have an allocation of DOTs.</Text>
+                    <Text>This App will walk you through the process of claiming dots. In order to do so, you need to have an allocation of dots.</Text>
                   </HeaderBox>
                   <h1>Placeholder</h1>
                   <DotButton>Start</DotButton>
@@ -405,7 +421,7 @@ class App extends React.Component {
                     <h1>Create a wallet</h1>
                     <Row>
                       <InternalLeft>
-                        <p>You will need to generate a Kusama account to claim KSM.
+                        <p>You will need to generate a Polkadot account to claim DOT.
     There are a few ways you can create one.
 
     For most users, we recommend using the Polkadot UI since it
@@ -417,7 +433,7 @@ class App extends React.Component {
   the security of your key. Additionally, two other options include
   the Enzyme browser extension wallet and the Polkawallet
   mobile wallet, although these require an extra step to generate
-  Kusama addresses.</p>
+  Polkadot addresses.</p>
                       </InternalRight>
                     </Row>
                   </Column>
@@ -429,7 +445,54 @@ class App extends React.Component {
                   Claims
                 </Section>
                 <Section height={600} bg='white'>
-                  Here goes the instructions
+                  Claim DOT
+                  <MainRight>
+                  {
+                      <div>
+                        <h4>Claims contract:</h4>
+                        <DisabledText>
+                        0x7aeefaab36a205a9d3c3c511db74d080997fbb63
+                          <CopyToClipboard text="0x7aeefaab36a205a9d3c3c511db74d080997fbb63">
+                            <DisabledButton>
+                              <FontAwesomeIcon icon={faClipboard}/>
+                            </DisabledButton>
+                          </CopyToClipboard>
+                        </DisabledText>
+                        <h4>ABI:</h4>
+                        <div style={{ position: 'relative' }}>
+                          <textarea style={{width: '100%', height: '100px', resize: 'none'}} disabled defaultValue={JSON.stringify(Claims)}></textarea>
+                          <CopyToClipboard text={JSON.stringify(Claims)}>
+                            <TextareaButton>click to copy</TextareaButton>
+                          </CopyToClipboard>
+                        </div>
+                        <h4>What is your Polkadot address? (<a href="#" target="_blank">Please check here</a>)</h4>
+                        <div>
+                          <MyInput
+                            width='450'
+                            name='valid-check'
+                            onChange={this.inputChange}
+                          />
+                          {' '}<SucceedIcon icon={Boolean(this.state.status) ? faThumbsUp : faUnlink} status={this.state.status}/>
+                        </div>
+                        {
+                          this.state.notice &&
+                            <p style ={{ color: 'red' }}>This is NOT a Polkadot address. Your Polkadot address will be: {encodeAddress(pUtil.hexToU8a(this.state.pubKey), 0)}</p>
+                        }
+                        <p>Public Key:</p>
+                        <DisabledText>
+                          {this.state.pubKey || ''}
+                          <CopyToClipboard text={this.state.pubKey || ''}>
+                            <DisabledButton>
+                              <FontAwesomeIcon icon={faClipboard}/>
+                            </DisabledButton>
+                          </CopyToClipboard>
+                        </DisabledText>
+                        <br />
+                        <p>You will need to <a href="https://github.com/MyCryptoHQ/MyCrypto/releases" target="_blank">download</a> and use MyCrypto locally to make this transaction.</p>
+                        <a href="https://guide.kusama.network/en/latest/start/dot-holders/" target="_blank">Instructions for DOT holders.</a><br/>
+                      </div>
+                  }
+                  </MainRight>
                 </Section>
                 <Section height={'400'} bg='#DB0072'>
                   {/* <MainHeadline>Check your claims</MainHeadline> */}
@@ -519,14 +582,14 @@ class App extends React.Component {
                   <a href="https://riot.im/app/#/room/#KSMAClaims:polkadot.builders" target="_blank">Need help? Join the Claims Support chat.</a>
 
                 </Section> */}
-                <MainRight>
+                {/* <MainRight>
                   <h4>Please claim your KSMs by using the Polkadot JS <a href="https://polkadot.js.org/apps/#/claims">Claims app</a>. If you need help please refer to the Kusama <a href="https://guide.kusama.network/en/latest/start/dot-holders/">guide</a>.</h4>
-                {/* <h4>How will you claim?</h4>
+                <h4>How will you claim?</h4>
                 <MySelect onChange={this.handleSelect} defaultValue="">
                   <option value="" disabled hidden>Choose your method to claim</option>
                   <option value="MyCrypto" disabled>On Ethereum (before genesis)</option>
                   <option value="On-chain" disabled>On Kusama (after genesis)</option>
-                </MySelect> */}
+                </MySelect>
                 {
                   this.state.myCrypto &&
                     <div>
@@ -541,7 +604,7 @@ class App extends React.Component {
                       </DisabledText>
                       <h4>ABI:</h4>
                       <div style={{ position: 'relative' }}>
-                        <textarea style={{width: '100%', height: '100px', resize: 'none'}} disabled>{JSON.stringify(Claims.abi)}</textarea>
+                        <textarea style={{width: '100%', height: '100px', resize: 'none'}} disabled>{JSON.stringify(Claims)}</textarea>
                         <CopyToClipboard text={JSON.stringify(Claims.abi)}>
                           <TextareaButton>click to copy</TextareaButton>
                         </CopyToClipboard>
@@ -557,7 +620,7 @@ class App extends React.Component {
                       </div>
                       {
                         this.state.notice &&
-                          <p style ={{ color: 'red' }}>This is a Substrate address. Your Kusama address will be: {encodeAddress(pUtil.hexToU8a(this.state.pubKey), 2)}</p>
+                          <p style ={{ color: 'red' }}>This is a Substrate address. Your Polkadot address will be: {encodeAddress(pUtil.hexToU8a(this.state.pubKey), 0)}</p>
                       }
                       <p>Public Key:</p>
                       <DisabledText>
@@ -579,7 +642,7 @@ class App extends React.Component {
                     <h4>Please claim your KSMs by using the Polkadot JS <a href="https://polkadot.js.org/apps/#/claims">Claims app</a>. If you need help please refer to the Kusama <a href="https://guide.kusama.network/en/latest/start/dot-holders/">guide</a>.</h4>
                   </div>
                 }
-                </MainRight>
+                </MainRight> */}
               </Main>
               {/* <InfoBox claims={this.state.claims || null} frozenToken={this.state.frozenToken || null} /> */}
             </>
