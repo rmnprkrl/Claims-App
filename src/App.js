@@ -201,9 +201,6 @@ const MainHeadline = styled.h1`
 // `;
 
 const MainRight = styled.div`
-  border-radius: 12px;
-  padding: 2%;
-  height: 100%;
   margin: auto;
   width: 70%;
 `;
@@ -239,6 +236,8 @@ const MySelect = styled.select`
   padding: 1px;
   padding-left: 2px;
   background: white;
+  margin: auto;
+  width: 70%;
 `;
 
 const MyLink = styled(Link)`
@@ -443,11 +442,17 @@ class App extends React.Component {
                 </Section>
                 <Section height={300} bg='silver'>
                   Claims
+                  <h4>How will you claim?</h4>
+                  <MySelect onChange={this.handleSelect} defaultValue="">
+                    <option value="">Choose your method to claim</option>
+                    <option value="MyCrypto">On Ethereum (before genesis)</option>
+                    <option value="On-chain" disabled>On Polkadot (after genesis)</option>
+                  </MySelect>
                 </Section>
                 <Section height={600} bg='white'>
                   Claim DOT
                   <MainRight>
-                  {
+                   {this.state.myCrypto && 
                       <div>
                         <h4>Claims contract:</h4>
                         <DisabledText>
