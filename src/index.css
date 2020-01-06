@@ -1,3 +1,7 @@
+html {
+  font-family: 'Muli', monospace;
+}
+
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
@@ -5,10 +9,6 @@ body {
   color: black;
   background-color: maroon;
   overflow-x: hidden;
-}
-
-html {
-  font-family: 'Muli', monospace;
 }
 
 button, Link {
@@ -19,20 +19,8 @@ p, h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
-p {
-  font-size: 13px;
-}
-
 li {
   font-size: 14px;
-}
-
-a {
-  color: #BC0066;
-}
-
-a:hover {
-  color: red;
 }
 
 code {
@@ -54,3 +42,12 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 p { font-size: 14px; }
+
+a {
+  color: grey;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #BC0066;
+}

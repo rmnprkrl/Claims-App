@@ -5,7 +5,7 @@ import * as pUtil from '@polkadot/util';
 import bs58 from 'bs58';
 import React from 'react';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import styled from 'styled-components';
 
 import Web3 from 'web3';
@@ -21,12 +21,6 @@ import InfoBox from './components/Info';
 import Claims from './build/contracts/Claims.json';
 import FrozenToken from './build/contracts/FrozenToken.json';
 
-// Colors
-const HotPink = '#BC0066';
-
-// Kusama Claim Prefix
-const KusamaClaimPrefix = 'Pay KSMs to the Kusama account:';
-
 const check = (address) => {
   const decoded = pUtil.bufferToU8a(bs58.decode(address));
   
@@ -34,29 +28,34 @@ const check = (address) => {
 }
 
 const Navbar = styled.div`
-  width: 100vw;
+  width: 80vw;
   height: 60px;
   background: white;
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   color: white;
   z-index: 100;
+  padding-left: 8%;
+  padding-right: 12%;
 `;
 
 const NavButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 16px;
-  color: black;
-  height: 100%;
-  width: 120px;
-  color: white;
-  :hover {
-    cursor: pointer;
-    background: white;
-    color: black;
-  }
+border-radius: 20px;
+background: #E6007A;
+width: 180px;
+border: none;
+color: white;
+padding: 10px;
+padding-left: 4px;
+padding-right: 4px;
+font-size: 20px;
+font-weight: 500;
+align-self: center;
+:hover {
+  cursor: pointer;
+}
 `;
 
 const Main = styled.div`
@@ -72,6 +71,15 @@ const Main = styled.div`
     justify-content: center;
     align-items: center;
   }
+`;
+
+const MainHeadline = styled.h1`
+  color: white;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  font-weight: 100;
+  font-size: 48px;
 `;
 
 const Section = styled.div`
@@ -95,6 +103,7 @@ const HeaderBox = styled.div`
   background: ;
   margin-left: 10%;
   margin-top: 2%;
+  margin-bottom: 10%;
 `;
 
 const Text = styled.h2`
@@ -168,47 +177,21 @@ const InnerSupportLeft = styled.div`
 
 const InnerSupportRight = styled.div`
   width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const SupportButton = styled(DotButton)`
   background: rgba(255,255,255,0.5);
   color: black;
-
+  margin-left: 80px;
+  margin-top: 50px;
 `;
-
-const MainHeadline = styled.h1`
-  color: white;
-  display: flex;
-  height: 100%;
-  align-items: center;
-`;
-
-// const MainRight = styled.div`
-//   display: none;
-//   flex-direction: column;
-//   align-items: left;
-//   width: 0%;
-//   margin-left: 0%;
-//   background: white;
-//   border-radius: 12px;
-//   padding: 0%;
-//   padding-top: 0;
-//   @media (max-width: 750px) {
-//     width: 90%;
-//     margin-bottom: 3%;
-//     margin-top: -1%;
-//   }
-// `;
 
 const MainRight = styled.div`
   margin: auto;
   width: 70%;
-`;
-
-const Spacer = styled.div`
-  width: 100%;
-  height: 60px;
-  background: transparent;
 `;
 
 const SucceedIcon = styled(FontAwesomeIcon)`
@@ -236,26 +219,8 @@ const MySelect = styled.select`
   padding: 1px;
   padding-left: 2px;
   background: white;
-  margin: auto;
-  width: 70%;
-`;
-
-const MyLink = styled(Link)`
-  width: 120px;
-  height: 100%;
-`;
-
-const MyButton = styled.button`
-  border-color: black;
-  border-radius: 10px;
-  border-width: 2px;
-  padding: 10px;
-  background: white;
-  :hover {
-    background: black;
-    color: white;
-    cursor: pointer;
-  }
+  width: 80%;
+  margin-top: 10px;
 `;
 
 const TextareaButton = styled.button`
@@ -311,17 +276,14 @@ class App extends React.Component {
   }
 
   componentDidMount = async () => {
+    const w3 = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/7121204aac9a45dcb9c2cc825fb85159"));
 
-  const w3 = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/7121204aac9a45dcb9c2cc825fb85159"));
-
-  this.setState({
-    web3: w3,
-  });
-
+    this.setState({
+      web3: w3,
+    });
   }
 
   initializeContracts = async (web3) => {
-
     const frozenToken = new web3.eth.Contract(FrozenToken, "0xebfbe0f24e6dfaff47b05a77b9c81ec9890542c3");
     const claims = new web3.eth.Contract(Claims, "0x7aeefaab36a205a9d3c3c511db74d080997fbb63");
   
@@ -389,270 +351,233 @@ class App extends React.Component {
   }
 
   render() {
-
     if (this.state.web3 !== null && !this.state.claims && !this.state.frozenToken) {
       this.initializeContracts(this.state.web3);
     }
 
     return (
       <Router>
-      <div>
-        <Navbar>
-          <img src={Polkadot} width='240px' height='120px'/>
-        </Navbar>
-        <Route
-          path='/'
-          render={() => (
-            <>
-              <Main>
-                <Section height={'300'} bg='#DB0072' centered={true}>
-                  <MainHeadline>Welcome to DOT Claims</MainHeadline>
-                </Section>
-                <Section height={600} bg='white'>
-                  <HeaderBox>
-                    <Text>This App will walk you through the process of claiming dots. In order to do so, you need to have an allocation of dots.</Text>
-                  </HeaderBox>
-                  <h1>Placeholder</h1>
-                  <DotButton>Start</DotButton>
-                </Section>
-                <Section height={300} bg='silver'>
-                  <Column paddingHoriz={10} paddingVert={5}>
-                    <h1>Create a wallet</h1>
-                    <Row>
-                      <InternalLeft>
-                        <p>You will need to generate a Polkadot account to claim DOT.
-    There are a few ways you can create one.
-
-    For most users, we recommend using the Polkadot UI since it
-    will allow you to store your encrypted keystore locally.</p>
-                      </InternalLeft>
-                      <InternalRight>
-                        <p>Another option you may consider using is the subkey command
-  line utility, which will allow you to take extra steps to protect
-  the security of your key. Additionally, two other options include
-  the Enzyme browser extension wallet and the Polkawallet
-  mobile wallet, although these require an extra step to generate
-  Polkadot addresses.</p>
-                      </InternalRight>
-                    </Row>
-                  </Column>
-                </Section>
-                <Section height={600} bg='white'>
-                  Here goes the instructions
-                </Section>
-                <Section height={300} bg='silver'>
-                  Claims
-                  <h4>How will you claim?</h4>
-                  <MySelect onChange={this.handleSelect} defaultValue="">
-                    <option value="">Choose your method to claim</option>
-                    <option value="MyCrypto">On Ethereum (before genesis)</option>
-                    <option value="On-chain" disabled>On Polkadot (after genesis)</option>
-                  </MySelect>
-                </Section>
-                <Section height={600} bg='white'>
-                  Claim DOT
-                  <MainRight>
-                   {this.state.myCrypto && 
-                      <div>
-                        <h4>Claims contract:</h4>
-                        <DisabledText>
-                        0x7aeefaab36a205a9d3c3c511db74d080997fbb63
-                          <CopyToClipboard text="0x7aeefaab36a205a9d3c3c511db74d080997fbb63">
-                            <DisabledButton>
-                              <FontAwesomeIcon icon={faClipboard}/>
-                            </DisabledButton>
-                          </CopyToClipboard>
-                        </DisabledText>
-                        <h4>ABI:</h4>
-                        <div style={{ position: 'relative' }}>
-                          <textarea style={{width: '100%', height: '100px', resize: 'none'}} disabled defaultValue={JSON.stringify(Claims)}></textarea>
-                          <CopyToClipboard text={JSON.stringify(Claims)}>
-                            <TextareaButton>click to copy</TextareaButton>
-                          </CopyToClipboard>
-                        </div>
-                        <h4>What is your Polkadot address? (<a href="#" target="_blank">Please check here</a>)</h4>
+        <div>
+          <Navbar>
+            <img src={Polkadot} width='180px' height='90px'/>
+            <NavButton>Start Claims</NavButton>
+          </Navbar>
+          <Route
+            path='/'
+            render={() => (
+              <>
+                <Main>
+                  <Section height={'300'} bg='#DB0072' centered={true}>
+                    <MainHeadline>Welcome to DOT Claims</MainHeadline>
+                  </Section>
+                  <Section height={500} bg='white'>
+                    <HeaderBox>
+                      <Text>This App will walk you through the process of claiming dots. In order to do so, you need to have an allocation of dots.</Text>
+                    </HeaderBox>
+                    {/* <h1>Placeholder</h1> */}
+                    <DotButton>Start</DotButton>
+                  </Section>
+                  <Section height={300} bg='silver'>
+                    <Column paddingHoriz={10} paddingVert={5}>
+                      <h1>Create a wallet</h1>
+                      <Row>
+                        <InternalLeft>
+                          <p>
+                            You will need to generate a Polkadot account to claim DOT.
+                            There are a few ways you can create one.
+                          </p>
+                          <p>
+                            For most users, we recommend using the Polkadot UI since it
+                            will allow you to store your encrypted keystore locally.
+                          </p>
+                        </InternalLeft>
+                        <InternalRight>
+                          <p>
+                            Another option you may consider using is the subkey command
+                            line utility, which will allow you to take extra steps to protect
+                            the security of your key. 
+                           </p>
+                           <p> 
+                            Additionally, two other options include
+                            the Enzyme browser extension wallet and the Polkawallet
+                            mobile wallet, although these require an extra step to generate
+                            Polkadot addresses.
+                          </p>
+                        </InternalRight>
+                      </Row>
+                    </Column>
+                  </Section>
+                  <Section height={600} bg='white'>
+                    Here goes the instructions
+                  </Section>
+                  <Section height={500} bg='silver'>
+                    <Column paddingHoriz={10} paddingVert={5}>
+                      <h1>DOTs Claim</h1>
+                      <Row>
+                        <InternalLeft>
+                          <p>
+                            If you participated in the DOT sale and have received your DOT
+                            indicator tokens, you can claim the corresponding amount of
+                            KSM.
+                          </p>
+                          <p>
+                            Make sure to use your original Ethereum key during this
+                            process.
+                          </p>
+                        </InternalLeft>
+                        <InternalRight>
+                          <p>
+                            If you don’t have a Polkadot address, you will
+                            need to generate a Polkadot address.
+                          </p>
+                          <p>
+                            Go to Create a Wallet.
+                          </p>
+                        </InternalRight>
+                      </Row>
+                      <Row>
+                        <Column>
+                          <h4>How will you claim?</h4>
+                          <MySelect onChange={this.handleSelect} defaultValue="">
+                            <option value="">Choose your method to claim</option>
+                            <option value="MyCrypto">On Ethereum (before genesis)</option>
+                            <option value="On-chain" disabled>On Polkadot (after genesis)</option>
+                          </MySelect>
+                        </Column>
+                      </Row>
+                    </Column>
+                  </Section>
+                  <Section height={600} bg='white'>
+                    <MainRight>
+                    {this.state.myCrypto && 
                         <div>
-                          <MyInput
-                            width='450'
-                            name='valid-check'
-                            onChange={this.inputChange}
-                          />
-                          {' '}<SucceedIcon icon={Boolean(this.state.status) ? faThumbsUp : faUnlink} status={this.state.status}/>
+                          <h4>Claims contract:</h4>
+                          <DisabledText>
+                          0x7aeefaab36a205a9d3c3c511db74d080997fbb63
+                            <CopyToClipboard text="0x7aeefaab36a205a9d3c3c511db74d080997fbb63">
+                              <DisabledButton>
+                                <FontAwesomeIcon icon={faClipboard}/>
+                              </DisabledButton>
+                            </CopyToClipboard>
+                          </DisabledText>
+                          <h4>ABI:</h4>
+                          <div style={{ position: 'relative' }}>
+                            <textarea style={{width: '100%', height: '100px', resize: 'none'}} disabled defaultValue={JSON.stringify(Claims)}></textarea>
+                            <CopyToClipboard text={JSON.stringify(Claims)}>
+                              <TextareaButton>click to copy</TextareaButton>
+                            </CopyToClipboard>
+                          </div>
+                          <h4>What is your Polkadot address? (<a href="#" target="_blank">Please check here</a>)</h4>
+                          <div>
+                            <MyInput
+                              width='450'
+                              name='valid-check'
+                              onChange={this.inputChange}
+                            />
+                            {' '}<SucceedIcon icon={Boolean(this.state.status) ? faThumbsUp : faUnlink} status={this.state.status}/>
+                          </div>
+                          {
+                            this.state.notice &&
+                              <p style ={{ color: 'red' }}>This is NOT a Polkadot address. Your Polkadot address will be: {encodeAddress(pUtil.hexToU8a(this.state.pubKey), 0)}</p>
+                          }
+                          <p>Public Key:</p>
+                          <DisabledText>
+                            {this.state.pubKey || ''}
+                            <CopyToClipboard text={this.state.pubKey || ''}>
+                              <DisabledButton>
+                                <FontAwesomeIcon icon={faClipboard}/>
+                              </DisabledButton>
+                            </CopyToClipboard>
+                          </DisabledText>
+                          <br />
+                          <p>You will need to <a href="https://github.com/MyCryptoHQ/MyCrypto/releases" target="_blank">download</a> and use MyCrypto locally to make this transaction.</p>
+                          <a href="https://guide.kusama.network/en/latest/start/dot-holders/" target="_blank">Instructions for DOT holders.</a><br/>
                         </div>
-                        {
-                          this.state.notice &&
-                            <p style ={{ color: 'red' }}>This is NOT a Polkadot address. Your Polkadot address will be: {encodeAddress(pUtil.hexToU8a(this.state.pubKey), 0)}</p>
-                        }
-                        <p>Public Key:</p>
-                        <DisabledText>
-                          {this.state.pubKey || ''}
-                          <CopyToClipboard text={this.state.pubKey || ''}>
-                            <DisabledButton>
-                              <FontAwesomeIcon icon={faClipboard}/>
-                            </DisabledButton>
-                          </CopyToClipboard>
-                        </DisabledText>
-                        <br />
-                        <p>You will need to <a href="https://github.com/MyCryptoHQ/MyCrypto/releases" target="_blank">download</a> and use MyCrypto locally to make this transaction.</p>
-                        <a href="https://guide.kusama.network/en/latest/start/dot-holders/" target="_blank">Instructions for DOT holders.</a><br/>
-                      </div>
-                  }
-                  </MainRight>
-                </Section>
-                <Section height={'400'} bg='#DB0072'>
-                  {/* <MainHeadline>Check your claims</MainHeadline> */}
-                  <InfoBox claims={this.state.claims || null} frozenToken={this.state.frozenToken || null} />
-                </Section>
-                <Section height={300} bg='silver' alignment='row'>
-                  <Column paddingHoriz={10} paddingVert={5}>
-                    <h1>Third Party Claims Processes</h1>
-                    <Row>
-                    <InnerSupportLeft>
-                      <p>We do not recommend using a third party app or process to claim or acquire your DOT.</p>
-                      <p>Claiming using a third-party process can lead to the loss ofyour allocation, therefore we cannot recommend using any
-  third party apps to do so. Manually specifying your transaction
-  data, as specified in our claims process, is the only way to be
-  certain you will receive your allocation.</p>
-                    </InnerSupportLeft>
-                    <InnerSupportRight>
-                      <p>Need help? Join the Claims Support chat.</p>
-                      <SupportButton>Support Chat</SupportButton>
-                    </InnerSupportRight>
+                    }
+                    </MainRight>
+                  </Section>
+                  <Section height={'400'} bg='#DB0072'>
+                    <InfoBox claims={this.state.claims || null} frozenToken={this.state.frozenToken || null} />
+                  </Section>
+                  <Section height={400} bg='silver' alignment='row'>
+                    <Column paddingHoriz={10} paddingVert={5}>
+                      <h1>Third Party Claims Processes</h1>
+                      <Row>
+                      <InnerSupportLeft>
+                        <p>
+                          We do not recommend using a third party app or process to claim or acquire your DOT.
+                        </p>
+                        <p>
+                          Claiming using a third-party process can lead to the loss ofyour allocation, therefore we cannot recommend using any
+                          third party apps to do so. Manually specifying your transaction
+                          data, as specified in our claims process, is the only way to be
+                          certain you will receive your allocation.
+                        </p>
+                      </InnerSupportLeft>
+                      <InnerSupportRight>
+                        <p>Need help? Join the Claims Support chat.</p>
+                        <SupportButton>Support Chat</SupportButton>
+                      </InnerSupportRight>
+                      </Row>
+                    </Column>
+                  </Section>
+                  <Section height={'420'} bg='#172026' color='white'>
+                    <Row paddingHoriz={10} paddingVert={2} style={{ width: '80%' }}>
+                      <Column> 
+                        <h5>General</h5>
+                        <a href="">About</a>
+                        <a href="">FAQ</a>
+                        <a href="">Contact</a>
+                        <a href="">Build on Polkadot</a>
+                        <a href="">Grants and Bounties</a>
+                        <a href="">Careers</a>
+                      </Column>
+                      <Column>
+                        <h5>Technology</h5>
+                        <a href="">Technology</a>
+                        <a href="">Token</a>
+                        <a href="">Telemetry</a>
+                        <a href="">Substrate</a>
+                        <a href="">Whitepaper</a>
+                      </Column>
+                      <Column>
+                        <h5>Community</h5>
+                        <a href="">Community</a>
+                        <a href="">Documentation</a>
+                        <a href="">Blog</a>
+                        <a href="">GitHub</a>
+                        <a href="">Riot Chat</a>
+                        <a href="">Medium</a>
+                        <a href="">Reddit</a>
+                        <a href="">Telegram</a>
+                      </Column>
+                      <Column>
+                        Icons!
+                      </Column>
                     </Row>
-                  </Column>
-                </Section>
-                <Section height={'420'} bg='#172026' color='white'>
-                  <Row paddingHoriz={10} paddingVert={2} style={{ width: '80%' }}>
-                    <Column> 
-                      <h5>General</h5>
-                      <a href="">About</a>
-                      <a href="">FAQ</a>
-                      <a href="">Contact</a>
-                      <a href="">Build on Polkadot</a>
-                      <a href="">Grants and Bounties</a>
-                      <a href="">Careers</a>
-                    </Column>
-                    <Column>
-                      <h5>Technology</h5>
-                      <a href="">Technology</a>
-                      <a href="">Token</a>
-                      <a href="">Telemetry</a>
-                      <a href="">Substrate</a>
-                      <a href="">Whitepaper</a>
-                    </Column>
-                    <Column>
-                      <h5>Community</h5>
-                      <a href="">Community</a>
-                      <a href="">Documentation</a>
-                      <a href="">Blog</a>
-                      <a href="">GitHub</a>
-                      <a href="">Riot Chat</a>
-                      <a href="">Medium</a>
-                      <a href="">Reddit</a>
-                      <a href="">Telegram</a>
-                    </Column>
-                    <Column>
-                      Icons!
-                    </Column>
-                  </Row>
-                  <Line/>
-                  <Row paddingHoriz={10} paddingVert={2} style={{ alignItems: 'flex-end', }}>
-                    <img width='120' src={PolkadotLight}/>
-                    © 2020
-                    <a href="">Polkadot</a>{' | '}
-                    <a href="">Impressum</a> |
-                    <a href="">Disclaimer</a> |
-                    <a href="">Privacy</a> |
-                    <a href="">Testnet Disclaimer</a> |
-                    <a href="">Memorandum  </a>
-                  </Row>
-                </Section>
-                {/* <Section>
-                  <h1>Claim KSM</h1>
-                  <br/>
-                  <p>This DApp will walk you through the process of claiming KSM. In order to claim KSM you need to have an allocation of DOTs.</p>
-                  <p>Using other processes to claim KSM is not recommended. </p>
-                  <h2>Create a Kusama address</h2>
-                  <br/>
-                  <p>You will first need to create an account. This is the account that you will be claiming your KSM to, so make sure to extra precautions to keep it secure. For some tips on keeping your key safe, <a href='#'>see here</a>. Create an account using one of the following methods:</p>
-                  <ul>
-                    <li><a href="https://polkadot.js.org/apps/#/accounts" target="_blank">Polkadot UI</a> <b>(Recommended for most users)</b></li>
-                    <li><code><a href="https://guide.kusama.network/en/latest/start/claims/#using-subkey">subkey</a></code> <b>(Most secure)</b></li>
-                    <li><a href="https://chrome.google.com/webstore/detail/enzyme/amligljifngdnodkebecdijmhnhojohh" target="_blank">Enzyme wallet</a> <b>(Chrome only)</b></li>
-                    <li><a href="https://polkawallet.io/#download" target="_blank">Polkawallet</a></li>
-                  </ul>
-                  <br/>
-                  <br/>
-                  <a href="https://guide.kusama.network/en/latest/start/claims/" target="_blank">See full step-by-step instructions.</a><br/>
-                  <a href="https://riot.im/app/#/room/#KSMAClaims:polkadot.builders" target="_blank">Need help? Join the Claims Support chat.</a>
-
-                </Section> */}
-                {/* <MainRight>
-                  <h4>Please claim your KSMs by using the Polkadot JS <a href="https://polkadot.js.org/apps/#/claims">Claims app</a>. If you need help please refer to the Kusama <a href="https://guide.kusama.network/en/latest/start/dot-holders/">guide</a>.</h4>
-                <h4>How will you claim?</h4>
-                <MySelect onChange={this.handleSelect} defaultValue="">
-                  <option value="" disabled hidden>Choose your method to claim</option>
-                  <option value="MyCrypto" disabled>On Ethereum (before genesis)</option>
-                  <option value="On-chain" disabled>On Kusama (after genesis)</option>
-                </MySelect>
-                {
-                  this.state.myCrypto &&
-                    <div>
-                      <h4>Claims contract:</h4>
-                      <DisabledText>
-                        0x9a1B58399EdEBd0606420045fEa0347c24fB86c2
-                        <CopyToClipboard text="0x9a1B58399EdEBd0606420045fEa0347c24fB86c2">
-                          <DisabledButton>
-                            <FontAwesomeIcon icon={faClipboard}/>
-                          </DisabledButton>
-                        </CopyToClipboard>
-                      </DisabledText>
-                      <h4>ABI:</h4>
-                      <div style={{ position: 'relative' }}>
-                        <textarea style={{width: '100%', height: '100px', resize: 'none'}} disabled>{JSON.stringify(Claims)}</textarea>
-                        <CopyToClipboard text={JSON.stringify(Claims.abi)}>
-                          <TextareaButton>click to copy</TextareaButton>
-                        </CopyToClipboard>
-                      </div>
-                      <h4>What is your Kusama or Substrate address?</h4>
-                      <div>
-                        <MyInput
-                          width='450'
-                          name='valid-check'
-                          onChange={this.inputChange}
-                        />
-                        {' '}<SucceedIcon icon={Boolean(this.state.status) ? faThumbsUp : faUnlink} status={this.state.status}/>
-                      </div>
-                      {
-                        this.state.notice &&
-                          <p style ={{ color: 'red' }}>This is a Substrate address. Your Polkadot address will be: {encodeAddress(pUtil.hexToU8a(this.state.pubKey), 0)}</p>
-                      }
-                      <p>Public Key:</p>
-                      <DisabledText>
-                        {this.state.pubKey || ''}
-                        <CopyToClipboard text={this.state.pubKey || ''}>
-                          <DisabledButton>
-                            <FontAwesomeIcon icon={faClipboard}/>
-                          </DisabledButton>
-                        </CopyToClipboard>
-                      </DisabledText>
-                      <br />
-                      <p>You will need to <a href="https://github.com/MyCryptoHQ/MyCrypto/releases" target="_blank">download</a> and use MyCrypto locally to make this transaction.</p>
-                      <a href="https://guide.kusama.network/en/latest/start/dot-holders/" target="_blank">Instructions for DOT holders.</a><br/>
-                    </div>
-                }
-                {
-                  this.state.kusama &&
-                  <div>
-                    <h4>Please claim your KSMs by using the Polkadot JS <a href="https://polkadot.js.org/apps/#/claims">Claims app</a>. If you need help please refer to the Kusama <a href="https://guide.kusama.network/en/latest/start/dot-holders/">guide</a>.</h4>
-                  </div>
-                }
-                </MainRight> */}
-              </Main>
-              {/* <InfoBox claims={this.state.claims || null} frozenToken={this.state.frozenToken || null} /> */}
-            </>
-          )}/>
-      </div>
+                    <Line/>
+                    <Row paddingHoriz={10} paddingVert={2} style={{ alignItems: 'flex-end', }}>
+                      <img width='120' src={PolkadotLight}/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;
+                      © 2020
+                      &nbsp;
+                      <a href="">Polkadot</a>&nbsp;|
+                      &nbsp;
+                      <a href="">Impressum</a>&nbsp;|
+                      &nbsp;
+                      <a href="">Disclaimer</a>&nbsp;|
+                      &nbsp;
+                      <a href="">Privacy</a>&nbsp;|
+                      &nbsp;
+                      <a href="">Testnet Disclaimer</a>&nbsp;|
+                      &nbsp;
+                      <a href="">Memorandum  </a>
+                    </Row>
+                  </Section>
+                </Main>
+              </>
+            )}/>
+        </div>
       </Router>
     );
   }
